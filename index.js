@@ -1,26 +1,54 @@
-const FitbitApiClient = require("fitbit-node");
+process.on("uncaughtException", function (error) {
+    if (error && error.stack) {
+        console.error("uncaughtException: " + error.stack);
+    } else {
+        console.error("uncaughtException: " + error);
+    }
+});
 
-const cred = require("./credentials.json");
+process.on("unhandledRejection", function (reason, p) {
+    console.error("unhandledRejection: " + reason);
+});
 
-let client = new FitbitApiClient(cred);
+const fitbit = require('./routes/fitbit')
+const app = require("express")();
+const bodyParser = require('body-parser');
 
-const scope = 'activity heartrate profile sleep weight';
+app.use(bodyParser.urlencoded());
 
-const redirectUrl = 'http://www.aus.edu';
+app.use('/fitbit', fitbit)
 
-let auth_url = client.getAuthorizeUrl(scope, redirectUrl);
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+    let err = new Error("Not Found");
+    err.status = 404;
+    if (req.accepts("html")) {
+        res.sendStatus(404);
+        return;
+    }
+    if (req.accepts("json")) {
+        res.send({
+            error: "Not found"
+        });
+        return;
+    }
+    res.type("txt").send("Not found");
+    next();
+});
 
-console.log(auth_url);
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    // res.render('error', {
+    //   message: err.message,
+    //   error: err
+    // });
+    res.json({
+        message: err.message,
+        error: err
+    });
+    next();
+});
 
-
-const express = require("express");
-
-let app = express();
-
-app.get("/",(req,res)=>{
-    res.send(auth_url);
-})
-
-app.listen(8080, ()=>{
+app.listen(8080, () => {
     console.log("Started listening on 8080");
 })
