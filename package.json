@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Aranyak-Ghosh/fitbit_test#readme",
   "dependencies": {
+    "express": "^4.16.3",
     "fitbit-node": "^2.1.0"
   }
 }
