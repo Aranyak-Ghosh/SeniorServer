@@ -16,6 +16,11 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded());
 
+app.use(function(req,res,next){
+    res.header('Access-Control-Allow-Origin','*');
+    next();
+})
+
 app.use('/fitbit', fitbit)
 
 // catch 404 and forward to error handler
