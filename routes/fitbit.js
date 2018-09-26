@@ -4,15 +4,11 @@ const router = express.Router();
 
 const cred = require("../credentials.json");
 
-let code = cred.code;
-
-delete cred.code;
-
-let client = new FitbitApiClient(cred);
+let client = new FitbitApiClient(cred.fitbit);
 
 const scope = 'activity heartrate profile sleep weight';
 
-const redirectUrl = 'http://10.25.147.115:8080/fitbit/accessToken';
+const redirectUrl = 'http://10.25.147.67:8080/fitbit/accessToken';
 
 let auth_url = client.getAuthorizeUrl(scope, redirectUrl);
 
@@ -45,7 +41,7 @@ router.get('/heartRate', async (req, res) => {
 });
 
 router.get('/sleep',async(req,res)=>{
-    let response=await client.get('/sleep/date/2017-09-23.json',req.query.token,'-');
+    let response=await client.get('/sleep/date/2018-09-23.json',req.query.token,'-');
     console.log(response);
     res.send(response);
 })
