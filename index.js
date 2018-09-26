@@ -13,15 +13,45 @@ process.on("unhandledRejection", function (reason, p) {
 const fitbit = require('./routes/fitbit')
 const app = require("express")();
 const bodyParser = require('body-parser');
+const user = require('./routes/user');
+const passport = require('passport');
+const expressSession = require('express-session');
 
-app.use(bodyParser.urlencoded());
+const userSchema = require('./models/userModel');
 
-app.use(function(req,res,next){
-    res.header('Access-Control-Allow-Origin','*');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
     next();
 })
 
-app.use('/fitbit', fitbit)
+app.use(expressSession({
+    secret: "BREATHE RIGHT",
+    // store: new RedisStore({
+    //     host: 'localhost',
+    //     port: 6379
+    // }),
+    cookie: {
+        maxAge: 60000
+    },
+    resave: false,
+    saveUninitialized: true
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(userSchema.serializeUser());
+passport.deserializeUser(userSchema.deserializeUser());
+
+
+app.use('/fitbit', fitbit);
+
+app.use('/user', user);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
