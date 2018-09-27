@@ -17,6 +17,7 @@ const user = require('./routes/user');
 const passport = require('passport');
 const expressSession = require('express-session');
 
+const localStrategy = require('passport-local');
 const userSchema = require('./models/userModel');
 
 app.use(bodyParser.json());
@@ -45,6 +46,7 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
+passport.use(new localStrategy(userSchema.authenticate()));
 passport.serializeUser(userSchema.serializeUser());
 passport.deserializeUser(userSchema.deserializeUser());
 

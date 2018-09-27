@@ -18,9 +18,24 @@ mongoose.connection.on('connected', () => {
 
 const User = require('../models/userModel');
 
-router.post('/login', (req, res) => {
+isLoggedIn = (req, res, next) => {
+    if (req.isAuthenticated())
+        return next();
+    res.send('login');
+}
+
+router.post('/login', passport.authenticate('local', { successRedirect: '/user/home', failiureRedirect: 'user/login' }), (req, res) => {
     console.log(req.body);
     res.send('login');
+});
+
+router.get('/home', isLoggedIn, (req, res) => {
+    res.send('home');
+});
+
+router.get('/logout', (req, res) => {
+    req.logout();
+    res.send('logout')
 });
 
 router.post('/signUp', (req, res) => {
@@ -45,5 +60,6 @@ router.post('/signUp', (req, res) => {
 router.get('/resetPassword', (req, res) => {
     res.send('resetPassword');
 });
+
 
 module.exports = router;
