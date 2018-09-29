@@ -33,11 +33,15 @@ router.get('/home', isLoggedIn, (req, res) => {
             upsert: true
         }, (err, doc, resp) => {
             if (!err && doc) {
-                res.send(token);
+                res.send({
+                    token
+                });
             } else if (err) {
                 console.log(err);
                 res.status(500);
-                res.send('Internal error');
+                res.send({
+                    msg: 'Internal error'
+                });
             }
         });
     } else {
@@ -48,13 +52,19 @@ router.get('/home', isLoggedIn, (req, res) => {
             if (err) {
                 console.log(err);
                 res.status(500);
-                res.send('Internal Error');
+                res.send({
+                    msg: 'Internal error'
+                });
             } else if (resp) {
                 console.log(resp);
-                res.send(resp)
+                res.send({
+                    token: resp.token
+                });
             } else {
                 res.status(500);
-                console.log('Token not found')
+                console.log({
+                    msg: 'Token not found'
+                })
             }
         })
     }
