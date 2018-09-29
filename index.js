@@ -17,8 +17,19 @@ const user = require('./routes/user');
 const passport = require('passport');
 const expressSession = require('express-session');
 
+const mongoose = require('mongoose');
 const localStrategy = require('passport-local');
 const userSchema = require('./models/userModel');
+
+const cred = require("./credentials.json");
+
+mongoose.connect(cred.mongoURL, {
+    useNewUrlParser: true
+});
+
+mongoose.connection.on('connected', () => {
+    console.log('Connected');
+})
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
