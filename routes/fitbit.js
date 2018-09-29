@@ -38,14 +38,14 @@ router.get('/getToken', (req, res) => {
         });
 })
 
-router.get('/heartRate', async (req, res) => {
-    let response = await client.get('/activities/heart/date/today/1d.json', req.query.token, '-');
-    console.log(response);
-    res.send(response);
-});
+// router.get('/heartRate', async (req, res) => {
+//     let response = await client.get('/activities/heart/date/today/1d.json', req.query.token, '-');
+//     console.log(response);
+//     res.send(response);
+// });
 
 router.get('/sleep', async (req, res) => {
-    let response = await client.get('/sleep/date/2018-09-23.json', req.query.token, '-');
+    let response = await client.get(`/sleep/date/${req.query.date}.json`, req.query.token, '-');
     console.log(response);
     res.send(response);
 })
