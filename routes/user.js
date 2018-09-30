@@ -15,59 +15,68 @@ isLoggedIn = (req, res, next) => {
     res.send('login');
 }
 
+// router.options('/login', (req, res) => {
+//     res.header('Access-Control-Allow-Methods', 'GET, POST');
+//     res.header("Access-Control-Allow-Headers", "Accept, Content-Type");
+//     // console.log(res);
+//     // res.redirect('/user/login');
+//     res.sendStatus(200);
+// })
+
 router.post('/login', passport.authenticate('local', {
-    successRedirect: '/user/home',
-    failiureRedirect: 'user/login'
+    failureRedirect: '/user/userexist'
 }), (req, res) => {
-    res.send('login');
+    let token = crypto.randomBytes(64).toString('base64');
+    Token.findOneAndUpdate({
+        username: req._passport.session.user || req.query.username
+    }, {
+        token: token
+    }, {
+        upsert: true
+    }, (err, doc, resp) => {
+        if (!err && doc) {
+            res.send({
+                token
+            });
+        } else if (err) {
+            console.log(err);
+            res.status(500);
+            res.send({
+                msg: 'Internal error'
+            });
+        }
+    });
 });
 
-router.get('/home', isLoggedIn, (req, res) => {
-    if (!req.query.token) {
-        let token = crypto.randomBytes(64).toString('base64');
-        Token.findOneAndUpdate({
-            username: req._passport.session.user || req.query.username
-        }, {
-            token: token
-        }, {
-            upsert: true
-        }, (err, doc, resp) => {
-            if (!err && doc) {
-                res.send({
-                    token
-                });
-            } else if (err) {
-                console.log(err);
-                res.status(500);
-                res.send({
-                    msg: 'Internal error'
-                });
-            }
-        });
-    } else {
-        Token.findOne({
-            token: req.query.token,
-            username: req.query.username
-        }, (err, resp) => {
-            if (err) {
-                console.log(err);
-                res.status(500);
-                res.send({
-                    msg: 'Internal error'
-                });
-            } else if (resp) {
-                console.log(resp);
-                res.send({
-                    token: resp.token
-                });
-            } else {
-                res.status(500);
-                console.log({
-                    msg: 'Token not found'
-                })
-            }
-        })
-    }
+router.get('/userexist', (req, res) => {
+    res.send({
+        msg: 'CheckIfUserExists'
+    });
+})
+
+router.get('/validateToken', isLoggedIn, (req, res) => {
+    Token.findOne({
+        token: req.query.token,
+    }, (err, resp) => {
+        if (err) {
+            console.log(err);
+            res.status(500);
+            res.send({
+                msg: 'Internal error'
+            });
+        } else if (resp) {
+            console.log(resp);
+            res.send({
+                token: resp.token
+            });
+        } else {
+            res.status(404);
+            console.log({
+                msg: 'Token not found'
+            })
+        }
+    })
+
 
 });
 
