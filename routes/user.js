@@ -15,13 +15,6 @@ isLoggedIn = (req, res, next) => {
     res.send('login');
 }
 
-// router.options('/login', (req, res) => {
-//     res.header('Access-Control-Allow-Methods', 'GET, POST');
-//     res.header("Access-Control-Allow-Headers", "Accept, Content-Type");
-//     // console.log(res);
-//     // res.redirect('/user/login');
-//     res.sendStatus(200);
-// })
 
 router.post('/login', passport.authenticate('local', {
     failureRedirect: '/user/userexist'
@@ -70,8 +63,8 @@ router.get('/validateToken', isLoggedIn, (req, res) => {
                 token: resp.token
             });
         } else {
-            res.status(404);
-            console.log({
+            res.send({
+                status: 'invalidToken',
                 msg: 'Token not found'
             })
         }

@@ -16,8 +16,6 @@ const bodyParser = require('body-parser');
 const user = require('./routes/user');
 const passport = require('passport');
 const expressSession = require('express-session');
-const cors = require('cors');
-var cookieParser = require('cookie-parser');
 
 const mongoose = require('mongoose');
 const localStrategy = require('passport-local');
@@ -33,8 +31,6 @@ mongoose.connection.on('connected', () => {
     console.log('Connected');
 })
 
-app.use(cookieParser('BREATHE RIGHT'));
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
@@ -44,12 +40,6 @@ app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     next();
 })
-
-// app.use((req,res,next)=>{
-
-// })
-
-// app.use(cors());
 
 app.use(expressSession({
     secret: "BREATHE RIGHT",
@@ -87,8 +77,6 @@ app.use((req, res, next) => {
 app.use('/fitbit', fitbit);
 
 app.use('/user', user);
-
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
