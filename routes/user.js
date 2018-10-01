@@ -58,7 +58,6 @@ router.get('/validateToken', isLoggedIn, (req, res) => {
                 msg: 'Internal error'
             });
         } else if (resp) {
-            console.log(resp);
             res.send({
                 token: resp.token
             });
