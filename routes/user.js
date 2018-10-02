@@ -97,7 +97,7 @@ router.post('/signUp', (req, res) => {
         });
     }, err => {
         console.log(err);
-        res.send(err.message);
+        res.send(err);
     })
 });
 
