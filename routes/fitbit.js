@@ -8,7 +8,7 @@ let client = new FitbitApiClient(cred.fitbit);
 
 const scope = 'activity heartrate profile sleep weight';
 
-const redirectUrl = 'http://10.25.147.67:8080/fitbit/accessToken';
+const redirectUrl = 'http://10.25.147.115:8080/fitbit/accessToken';
 
 let auth_url = client.getAuthorizeUrl(scope, redirectUrl);
 
@@ -36,13 +36,19 @@ router.get('/getToken', (req, res) => {
         res.send({
             msg: 'Token not available'
         });
-})
+});
 
 // router.get('/heartRate', async (req, res) => {
 //     let response = await client.get('/activities/heart/date/today/1d.json', req.query.token, '-');
 //     console.log(response);
 //     res.send(response);
 // });
+
+    router.post('/refreshToken', async (req,res)=>{
+        let data=await client.refreshAccessToken(req.body.accessToken,req.body.refreshToken);
+        console.log(data);
+        res.send(data);
+    })
 
 router.get('/sleep', async (req, res) => {
     let response = await client.get(`/sleep/date/${req.query.date}.json`, req.query.token, '-');
