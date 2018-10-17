@@ -44,11 +44,15 @@ router.get('/getToken', (req, res) => {
 //     res.send(response);
 // });
 
-    router.post('/refreshToken', async (req,res)=>{
-        let data=await client.refreshAccessToken(req.body.accessToken,req.body.refreshToken);
+router.post('/refreshToken', async (req, res) => {
+    try {
+        let data = await client.refreshAccessToken(req.body.accessToken, req.body.refreshToken);
         console.log(data);
         res.send(data);
-    })
+    } catch (err) {
+        console.log(err);
+    }
+})
 
 router.get('/sleep', async (req, res) => {
     let response = await client.get(`/sleep/date/${req.query.date}.json`, req.query.token, '-');
