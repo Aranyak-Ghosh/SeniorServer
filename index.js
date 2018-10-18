@@ -121,6 +121,6 @@ app.use(function(req, res, next) {
 //     next();
 // });
 
-app.listen(8080, () => {
-  console.log("Started listening on 8080");
+app.listen(process.env.PORT, () => {
+  console.log("Started listening on ",process.env.PORT);
 });
