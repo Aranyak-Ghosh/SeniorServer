@@ -24,6 +24,9 @@ const localStrategy = require("passport-local");
 const userSchema = require("./models/userModel");
 
 const cred = require("./credentials.json");
+const logger = require("./logger");
+
+global.logger = logger;
 
 mongoose.connect(
   cred.mongoURL,
@@ -33,7 +36,7 @@ mongoose.connect(
 );
 
 mongoose.connection.on("connected", () => {
-  console.log("Connected");
+  logger.verbose("Connected to Mongoose");
 });
 
 app.use(bodyParser.json());
@@ -42,6 +45,8 @@ app.use(
     extended: false
   })
 );
+
+let port = process.env.PORT || 8080;
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -121,6 +126,6 @@ app.use(function(req, res, next) {
 //     next();
 // });
 
-app.listen(process.env.PORT, () => {
-  console.log("Started listening on ",process.env.PORT);
+app.listen(port, () => {
+  logger.verbose(`Started listening on port ${port}`);
 });
