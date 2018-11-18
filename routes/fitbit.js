@@ -1,6 +1,7 @@
 const express = require("express");
 const FitbitApiClient = require("fitbit-node");
 const router = express.Router();
+const request = require("request");
 
 const cred = require("../credentials.json");
 
@@ -8,13 +9,15 @@ let client = new FitbitApiClient(cred.fitbit);
 
 const scope = "activity heartrate profile sleep weight";
 
-const redirectUrl = "http://10.25.147.115:8080/fitbit/accessToken";
+const redirectUrl = "http://localhost:8080/fitbit/accessToken";
+//   "https://sleepy-eyrie-82836.herokuapp.com/fitbit/accessToken";
 
 let auth_url = client.getAuthorizeUrl(scope, redirectUrl);
 
 let token;
 
 router.get("/auth_url", (req, res) => {
+  logger.verbose(`Sending AUTH_URL to client`);
   res.send({
     auth_url
   });
@@ -25,7 +28,8 @@ router.get("/accessToken", async (req, res) => {
     token = await client.getAccessToken(req.query.code, redirectUrl);
     res.send("<h1>You may close this tab now</h1>");
   } catch (err) {
-    console.error(err);
+    logger.error(err);
+    res.status(500).send("InternalError");
   }
 });
 
@@ -43,10 +47,10 @@ router.post("/refreshToken", async (req, res) => {
       req.body.accessToken,
       req.body.refreshToken
     );
-    console.log(data);
     res.send(data);
   } catch (err) {
-    console.log(err);
+    logger.error(err);
+    res.status(500).send("InternalError");
   }
 });
 
@@ -60,7 +64,7 @@ router.get("/sleep", async (req, res) => {
     if (response && response.length) res.send(response[0]["sleep"]);
     else throw new Error("Invalid Response");
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     res.status(500).send("InternalError");
   }
 });
@@ -76,7 +80,7 @@ router.get("/heartrate", async (req, res) => {
       res.send(response[0]["activities-heart-intraday"]);
     else throw new Error("Invalid Response");
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     res.status(500).send("InternalError");
   }
 });

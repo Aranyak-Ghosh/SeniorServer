@@ -68,3 +68,7 @@ credentials.json
 
 #fuzzy information set
 *.fis
+
+.vscode/launch.json
+
+.log

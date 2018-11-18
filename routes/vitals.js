@@ -6,11 +6,14 @@ const TokenSchema = require("../models/TokenModel");
 
 router.post("/add", (req, res) => {
   // req.body.token
+  logger.verbose(`Adding vital to db`);
+
   TokenSchema.findOne({
     token: req.body.token
   }).exec((err, resp) => {
     if (err) {
-      console.log(err);
+      logger.error(`An error occurred while finding token`);
+      logger.error(err);
       res.status(500);
       res.send("Internal error");
     } else if (resp) {
@@ -21,7 +24,8 @@ router.post("/add", (req, res) => {
         time: Date.now()
       }).save(err => {
         if (err) {
-          console.log(err);
+          logger.error(`An error occured while uploading vital to database`);
+          logger.error(err);
           res.status(500);
           res.send(err);
         } else res.send(true);
@@ -30,8 +34,16 @@ router.post("/add", (req, res) => {
   });
 });
 
-router.get('/:vital/:date',(req,res)=>{
-  console.log(req.param.vital);
-}); 
+router.post("/get/:startdate/:enddate", (req, res) => {
+  TokenSchema.findOne({
+    token: req.body.token
+  }).exec((err, resp) => {
+    if (err) {
+      logger.error(`An error occurred while finding token`);
+      logger.error(err);
+      // console.log()
+    }
+  });
+});
 
 module.exports = router;
