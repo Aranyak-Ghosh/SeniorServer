@@ -60,4 +60,11 @@ typings/
 # next.js build output
 .next
 
+#Credentials file
 credentials.json
+
+#data sets for neuro fuzzy
+*.dat
+
+#fuzzy information set
+*.fis

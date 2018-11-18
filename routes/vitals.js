@@ -30,4 +30,8 @@ router.post("/add", (req, res) => {
   });
 });
 
+router.get('/:vital/:date',(req,res)=>{
+  console.log(req.param.vital);
+}); 
+
 module.exports = router;

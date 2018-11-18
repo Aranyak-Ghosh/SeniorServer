@@ -121,6 +121,8 @@ app.use(function(req, res, next) {
 //     next();
 // });
 
-app.listen(process.env.PORT, () => {
-  console.log("Started listening on ",process.env.PORT);
+let port=process.env.PORT||8080;
+
+app.listen(port, () => {
+  console.log("Started listening on ",port);
 });
