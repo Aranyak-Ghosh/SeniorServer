@@ -29,7 +29,7 @@ const customlevel = {
   }
 };
 
-var logger = new winston.Logger({
+var logger = winston.createLogger({
   levels: customlevel.levels,
   transports: [
     new winston.transports.File({
