@@ -5,8 +5,8 @@ const router = express.Router();
 // const cred = require("../credentials.json");
 
 let fitbitCred = {
-  clientId: process.env.fitbitClientId || cred.fitbit.clientId,
-  clientSecret: process.env.fitbitClientSecred || cred.fitbit.clientSecret
+  clientId: process.env.fitbitClientId,
+  clientSecret: process.env.fitbitClientSecred
 };
 
 let client = new FitbitApiClient(fitbitCred);
