@@ -68,6 +68,10 @@ app.use(
   })
 );
 
+app.get('/',(req,res)=>{
+  res.send("<h1>Ak, Nova And Nagwa's super awesome senior project.</h1>")
+})
+
 app.use(passport.initialize());
 app.use(passport.session());
 
