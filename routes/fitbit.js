@@ -2,7 +2,7 @@ const express = require("express");
 const FitbitApiClient = require("fitbit-node");
 const router = express.Router();
 
-const cred = require("../credentials.json");
+// const cred = require("../credentials.json");
 
 let fitbitCred = {
   clientId: process.env.fitbitClientId || cred.fitbit.clientId,
