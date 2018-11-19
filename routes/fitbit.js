@@ -3,13 +3,18 @@ const FitbitApiClient = require("fitbit-node");
 const router = express.Router();
 const request = require("request");
 
-const cred = require("../credentials.json");
+const cred = require("../credentials.json").fitbit;
 
-let client = new FitbitApiClient(cred.fitbit);
+let fitbitCred={
+  clientId:process.env.fitbitClientId||cred.clientId,
+  clientSecret:process.env.fitbitClientSecred||cred.clientSecret
+}
+
+let client = new FitbitApiClient(fitbitCred);
 
 const scope = "activity heartrate profile sleep weight";
 
-const redirectUrl = "http://localhost:8080/fitbit/accessToken";
+const redirectUrl = "http://192.168.1.108:8080/fitbit/accessToken";
 //   "https://sleepy-eyrie-82836.herokuapp.com/fitbit/accessToken";
 
 let auth_url = client.getAuthorizeUrl(scope, redirectUrl);
