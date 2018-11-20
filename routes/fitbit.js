@@ -10,6 +10,8 @@ let fitbitCred = {
   clientSecret: process.env.fitbitClientSecred
 };
 
+console.log(JSON.stringify(fitbitCred));
+
 let client = new FitbitApiClient(fitbitCred);
 
 const scope = "activity heartrate profile sleep weight";
