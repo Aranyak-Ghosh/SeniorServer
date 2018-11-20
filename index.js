@@ -16,11 +16,9 @@ const vital = require("./routes/vitals");
 
 const app = require("express")();
 const bodyParser = require("body-parser");
-const passport = require("passport");
 const expressSession = require("express-session");
 
 const mongoose = require("mongoose");
-const localStrategy = require("passport-local");
 const userSchema = require("./models/userModel");
 
 const cred = require("./credentials.json");
@@ -71,13 +69,6 @@ app.use(
 app.get('/',(req,res)=>{
   res.send("<h1>Ak, Nova And Nagwa's super awesome senior project.</h1>")
 })
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.use(new localStrategy(userSchema.authenticate()));
-passport.serializeUser(userSchema.serializeUser());
-passport.deserializeUser(userSchema.deserializeUser());
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", true);

@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 const crypto = require("crypto");
 
-const passport = require("passport");
+const bcrypt = require("bcrypt");
 
 const User = require("../models/userModel");
 const Token = require("../models/TokenModel");
+
+const saltRound = 10;
 
 isLoggedIn = (req, res, next) => {
   logger.verbose(`Checking if user already logged in`);
@@ -14,47 +16,55 @@ isLoggedIn = (req, res, next) => {
   res.send("login");
 };
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    failureRedirect: "/user/userexist"
-  }),
-  (req, res) => {
-    logger.verbose(`Logging User in`);
-    logger.verbose(`Generating token`);
-    let token = crypto.randomBytes(64).toString("base64");
-    Token.findOneAndUpdate(
-      {
-        username: req._passport.session.user || req.query.username
-      },
-      {
-        token: token
-      },
-      {
-        upsert: true
-      },
-      (err, doc, resp) => {
-        if (!err && doc) {
-          logger.verbose("Updated Token");
-          res.send({
-            token
-          });
-        } else if (err) {
-          logger.error(`An error occured while storing token in db`);
-          logger.error(err);
-          res.status(500);
-          res.send({
-            msg: "Internal error"
-          });
+router.post("/login", (req, res) => {
+  logger.verbose(`Logging User in`);
+  User.findOne({ username: req.body.username }, async (err, doc) => {
+    if (!err && doc) {
+      try {
+        let match = await bcrypt.compare(req.body.password, doc.password);
+        if (match) {
+          logger.verbose(`Generating token`);
+          let token = crypto.randomBytes(64).toString("base64");
+          Token.findOneAndUpdate(
+            {
+              username: req.body.username
+            },
+            {
+              token: token
+            },
+            {
+              upsert: true
+            },
+            (err, doc, resp) => {
+              if (!err && doc) {
+                logger.verbose("Updated Token");
+                res.send({
+                  token
+                });
+              } else if (err) {
+                logger.error(`An error occured while storing token in db`);
+                logger.error(err);
+                res.status(500);
+                res.send("Internal error");
+              }
+            }
+          );
+        } else {
+          res.send("IncorrectPassword");
         }
+      } catch (e) {
+        logger.error(e);
+        res.status(500);
+        res.send("internalError");
       }
-    );
-  }
-);
-
-router.get("/userexist", (req, res) => {
-  res.send({
-    msg: "CheckIfUserExists"
+    } else if (err) {
+      logger.error(err);
+      res.status(500);
+      res.send("internalError");
+    } else {
+      logger.error("User Does Not Exist");
+      res.send("UserDoesNotExist");
+    }
   });
 });
 
@@ -89,39 +99,35 @@ router.get("/validateToken", isLoggedIn, (req, res) => {
 router.get("/logout", (req, res) => {
   req.logout();
   logger.verbose("Logging out user");
-  Token.findOneAndDelete({
-    username: req._passport.session.user
-  }).exec();
+
   res.send("logout");
 });
 
-router.post("/signUp", (req, res) => {
+router.post("/signUp", async (req, res) => {
   logger.verbose("Creating new user");
-  User.register(
-    new User({
-      username: req.body.email,
+  try {
+    let hash = await bcrypt.hash(req.body.password, saltRound);
+    let user = new User({
+      username: req.body.username,
       contactNo: req.body.mobile,
       gender: req.body.gender,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       age: req.body.age,
-      address: req.body.address
-    }),
-    req.body.password
-  ).then(
-    data => {
-      passport.authenticate("local")(req, res, () => {
-        res.send({
-          success: true
-        });
-      });
-    },
-    err => {
-      logger.error("An error occured while creating a new user");
-      logger.error(err);
-      res.send(err);
-    }
-  );
+      address: req.body.address,
+      password: hash
+    }).save(err => {
+      if (err) {
+        logger.error(err);
+        res.status(500).send("InternalError");
+      } else {
+        res.send("registered");
+      }
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send("InternalError");
+  }
 });
 
 router.get("/resetPassword", (req, res) => {
