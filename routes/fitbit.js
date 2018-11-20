@@ -7,10 +7,8 @@ const tokenModel=require('../models/TokenModel');
 
 let fitbitCred = {
   clientId: process.env.fitbitClientId,
-  clientSecret: process.env.fitbitClientSecred
+  clientSecret: process.env.fitbitClientSecret
 };
-
-console.log(JSON.stringify(fitbitCred));
 
 let client = new FitbitApiClient(fitbitCred);
 
@@ -36,7 +34,7 @@ router.get("/accessToken", async (req, res) => {
     token = await client.getAccessToken(req.query.code, redirectUrl);
     res.send("<h1>You may close this tab now</h1>");
   } catch (err) {
-    console.error(JSON.stringify(err));
+    logger.error(JSON.stringify(err));
     res.status(500).send("InternalError");
   }
 });
