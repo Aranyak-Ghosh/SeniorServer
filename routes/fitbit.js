@@ -2,20 +2,19 @@ const express = require("express");
 const FitbitApiClient = require("fitbit-node");
 const router = express.Router();
 
-const tokenModel=require('../models/TokenModel');
-// const cred = require("../credentials.json");
+const tokenModel = require("../models/TokenModel");
+const cred = require("../credentials.json").fitbit;
 
 let fitbitCred = {
-  clientId: process.env.fitbitClientId,
-  clientSecret: process.env.fitbitClientSecret
+  clientId: process.env.fitbitClientId || cred.clientId,
+  clientSecret: process.env.fitbitClientSecret || cred.clientSecret
 };
 
 let client = new FitbitApiClient(fitbitCred);
 
 const scope = "activity heartrate profile sleep weight";
 
-const redirectUrl =
-  "https://respiconnect.herokuapp.com/fitbit/accessToken";
+const redirectUrl = "https://respiconnect.herokuapp.com/fitbit/accessToken";
 // "http://192.168.1.108:8080/fitbit/accessToken";
 
 let auth_url = client.getAuthorizeUrl(scope, redirectUrl);
@@ -37,6 +36,25 @@ router.get("/accessToken", async (req, res) => {
     logger.error(JSON.stringify(err));
     res.status(500).send("InternalError");
   }
+});
+
+router.post("/saveToken", async (req, res) => {
+  tokenModel
+    .findOneAndUpdated(
+      { token: req.body.token },
+      {
+        fitbitToken: req.body.fitbitToken,
+        fitbitRefreshToken: req.body.fitbitRefreshToken
+      }
+    )
+    .exec((err, doc) => {
+      if(err)
+        res.status(500).send("InternalError");
+      else{
+        console.log(doc);
+        res.send("Stored");
+      }
+    });
 });
 
 router.get("/getToken", (req, res) => {

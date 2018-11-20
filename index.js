@@ -23,13 +23,13 @@ const mongoose = require("mongoose");
 const localStrategy = require("passport-local");
 const userSchema = require("./models/userModel");
 
-// const cred = require("./credentials.json");
+const cred = require("./credentials.json");
 const logger = require("./logger");
 
 global.logger = logger;
 
 mongoose.connect(
-  process.env.mongoURL,
+  process.env.mongoURL||cred.mongoURL,
   {
     useNewUrlParser: true
   }

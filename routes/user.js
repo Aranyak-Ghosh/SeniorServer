@@ -35,6 +35,7 @@ router.post(
       },
       (err, doc, resp) => {
         if (!err && doc) {
+          logger.verbose("Updated Token");
           res.send({
             token
           });
