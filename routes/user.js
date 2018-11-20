@@ -9,13 +9,6 @@ const Token = require("../models/TokenModel");
 
 const saltRound = 10;
 
-isLoggedIn = (req, res, next) => {
-  logger.verbose(`Checking if user already logged in`);
-  if (req.isAuthenticated()) return next();
-  else if (req.query.token) return next();
-  res.send("login");
-};
-
 router.post("/login", (req, res) => {
   logger.verbose(`Logging User in`);
   User.findOne({ username: req.body.username }, async (err, doc) => {
@@ -68,7 +61,7 @@ router.post("/login", (req, res) => {
   });
 });
 
-router.get("/validateToken", isLoggedIn, (req, res) => {
+router.get("/validateToken", (req, res) => {
   logger.verbose(`Validating token sent by client`);
   Token.findOne(
     {
@@ -106,22 +99,30 @@ router.get("/logout", (req, res) => {
 router.post("/signUp", async (req, res) => {
   logger.verbose("Creating new user");
   try {
-    let hash = await bcrypt.hash(req.body.password, saltRound);
-    let user = new User({
-      username: req.body.username,
-      contactNo: req.body.mobile,
-      gender: req.body.gender,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      age: req.body.age,
-      address: req.body.address,
-      password: hash
-    }).save(err => {
-      if (err) {
+    User.findOne({ username: req.body.username }, async (error, doc) => {
+      if (!error && doc) res.send("UserExistsError");
+      else if (error) {
         logger.error(err);
         res.status(500).send("InternalError");
       } else {
-        res.send("registered");
+        let hash = await bcrypt.hash(req.body.password, saltRound);
+        let user = new User({
+          username: req.body.username,
+          contactNo: req.body.mobile,
+          gender: req.body.gender,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          age: req.body.age,
+          address: req.body.address,
+          password: hash
+        }).save(err => {
+          if (err) {
+            logger.error(err);
+            res.status(500).send("InternalError");
+          } else {
+            res.send("registered");
+          }
+        });
       }
     });
   } catch (err) {
