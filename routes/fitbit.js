@@ -2,6 +2,7 @@ const express = require("express");
 const FitbitApiClient = require("fitbit-node");
 const router = express.Router();
 
+const tokenModel=require('../models/TokenModel');
 // const cred = require("../credentials.json");
 
 let fitbitCred = {
@@ -33,7 +34,7 @@ router.get("/accessToken", async (req, res) => {
     token = await client.getAccessToken(req.query.code, redirectUrl);
     res.send("<h1>You may close this tab now</h1>");
   } catch (err) {
-    logger.error(err);
+    console.error(err);
     res.status(500).send("InternalError");
   }
 });
