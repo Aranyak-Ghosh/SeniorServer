@@ -34,7 +34,7 @@ router.get("/accessToken", async (req, res) => {
     token = await client.getAccessToken(req.query.code, redirectUrl);
     res.send("<h1>You may close this tab now</h1>");
   } catch (err) {
-    console.error(err);
+    console.error(err.error);
     res.status(500).send("InternalError");
   }
 });
