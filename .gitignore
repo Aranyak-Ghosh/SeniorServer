@@ -64,10 +64,9 @@ typings/
 credentials.json
 
 #data sets for neuro fuzzy
-# *.dat
+*.dat
 
-#fuzzy information set
-*.fis
+/FIS
 
 .vscode/launch.json
 
