@@ -100,7 +100,7 @@ router.post("/signUp", async (req, res) => {
   logger.verbose("Creating new user");
   try {
     User.findOne({ username: req.body.username }, async (error, doc) => {
-      if (!error && doc) res.send("UserExistsError");
+      if (!error && doc) res.send({ msg: "UserExistsError" });
       else if (error) {
         logger.error(err);
         res.status(500).send("InternalError");
@@ -120,7 +120,7 @@ router.post("/signUp", async (req, res) => {
             logger.error(err);
             res.status(500).send("InternalError");
           } else {
-            res.send("registered");
+            res.status(200).send({ msg: "registered" });
           }
         });
       }
