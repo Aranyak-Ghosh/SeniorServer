@@ -83,11 +83,10 @@ router.post("/get", (req, res) => {
           } else {
             let response = [];
             body.forEach(val => {
-              if (val.value[req.body.type])
-                response.push({
-                  time: val.time,
-                  value: val.value[req.body.type]
-                });
+              response.push({
+                time: val.time,
+                value: val.value
+              });
             });
             res.send(response);
           }
