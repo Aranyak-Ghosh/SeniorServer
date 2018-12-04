@@ -29,25 +29,33 @@ router.post("/add", (req, res) => {
           res.status(500);
           res.send(err);
         } else {
-          let vals = req.body;
+          let vals = req.body.value;
+          if (req.body.type == "Asthma") {
+            let command;
+            command =
+              "cd FIS/evaluateFis/for_redistribution_files_only && evaluateFis " +
+              vals["PEF"] +
+              " " +
+              vals["FEV1"] +
+              " " +
+              vals["FVC"] +
+              " " +
+              vals["FEF"];
 
-          let command =
-            "/MATLAB_FIS/evalFis " +
-            vals["value.PEF"] +
-            " " +
-            vals["value.FEV1"] +
-            " " +
-            vals["value.FVC"] +
-            " " +
-            vals["value.FEF"];
+            logger.verbose(command);
 
-          exec(command, (err, out) => {
-            if (!err) res.status(200).send(out);
-            else {
-              console.log(err);
-              res.status(500).send("UnexpectedError");
-            }
-          });
+            exec(command, (err, out) => {
+              if (!err) {
+                console.log(out);
+                res.status(200).send(out);
+              } else {
+                console.log(err);
+                res.status(500).send("UnexpectedError");
+              }
+            });
+          } else {
+            res.status(200).send("Stored");
+          }
         }
       });
     }
