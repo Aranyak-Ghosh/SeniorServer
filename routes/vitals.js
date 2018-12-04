@@ -62,14 +62,36 @@ router.post("/add", (req, res) => {
   });
 });
 
-router.post("/get/:startdate/:enddate", (req, res) => {
+router.post("/get", (req, res) => {
   TokenSchema.findOne({
     token: req.body.token
   }).exec((err, resp) => {
     if (err) {
       logger.error(`An error occurred while finding token`);
       logger.error(err);
-      // console.log()
+      res.status(500).send("InternalError");
+    } else {
+      vitalSchema
+        .find({
+          pID: resp.username
+        })
+        .exec((err, body) => {
+          if (err) {
+            logger.error("Error occured while finding data");
+            logger.error(err);
+            res.status(500).send("InternalError");
+          } else {
+            let response = [];
+            body.forEach(val => {
+              if (val.value[req.body.type])
+                response.push({
+                  time: val.time,
+                  value: val.value[req.body.type]
+                });
+            });
+            res.send(response);
+          }
+        });
     }
   });
 });
