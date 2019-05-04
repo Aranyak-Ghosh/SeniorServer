@@ -7,6 +7,8 @@ The system is built using nodeJS and requires the device to have nodeJS and npm 
 
 Additionally, the application requires a Matlab runtime. More information available [here](https://www.mathworks.com/products/compiler/matlab-runtime.html)
 
+The project uses a json file which stores credentials to connect to the database and credentials for fitbit credentials (Client ID and Client Secret) called credentials.json. Alternatively, the application can also read these variables from environment variables. 
+
 Once all the prerequistes are met, go to the project directory and install all dependencies using the following command on a terminal
 ```
 npm i
