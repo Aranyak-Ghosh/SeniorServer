@@ -3,9 +3,9 @@ A nodeJS server built as part of my capstone project which uses a mongoDB databa
 
 ## Installation
 
-The system is built using nodeJS and requires the device to have nodeJS and npm installed. To know more follow this link https://nodejs.org/en/download/ 
+The system is built using nodeJS and requires the device to have nodeJS and npm installed. To know more follow this [link]( https://nodejs.org/en/download/) 
 
-Additionally, the application requires a Matlab runtime. More information available here https://www.mathworks.com/products/compiler/matlab-runtime.html
+Additionally, the application requires a Matlab runtime. More information available [here](https://www.mathworks.com/products/compiler/matlab-runtime.html)
 
 Once all the prerequistes are met, go to the project directory and install all dependencies using the following command on a terminal
 ```
